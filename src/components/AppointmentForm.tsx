@@ -1,8 +1,7 @@
 import { withStyles, Typography, Button } from '@material-ui/core';
-import { Field, Form, Formik, FormikProps } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import { formatDateRange, getAge } from '../utils/date';
 import CheckIcon from '@material-ui/icons/Check';
-
 interface Form {
   practitionerId: string;
   patientId: string;
@@ -37,16 +36,27 @@ const AppointmentForm = ({
   practitioners,
   patients,
   availabilities,
-  setIds,
-  practictionerId,
+  setPractitionerId,
+  practitionerId,
+  onSubmitAppointmentForm,
 }) => {
   const initialValues = {
-    practitionerId: practitioners?.[0]?.id,
-    patientId: patients?.[0]?.id,
-    availabilitiesId: availabilities?.[0]?.id,
+    practitionerId: '',
+    patientId: '',
+    availabilitiesId: '',
+  };
+  const isSubmitDisabled = (props) => {
+    const isNotEmpty =
+      props?.practitionerId && props?.patientId && props?.availabilitiesId;
+
+    return (
+      !!isNotEmpty &&
+      !!practitionerId &&
+      props?.practitionerId === practitionerId
+    );
   };
 
-  const SelectField = ({ label, name, datas, value }) => {
+  const SelectField = ({ label, name, datas, setFieldValue, value }) => {
     return (
       <>
         <Typography>{label}</Typography>
@@ -54,11 +64,25 @@ const AppointmentForm = ({
           {name === 'practitionerId' && (
             <CheckIcon
               className={`${
-                practictionerId ? classes.iconSuccess : classes.iconWarning
+                practitionerId && practitionerId === value
+                  ? classes.iconSuccess
+                  : classes.iconWarning
               } ${classes.icon}`}
             />
           )}
-          <Field as="select" name={name} className={classes.select}>
+          <Field
+            as="select"
+            name={name}
+            className={classes.select}
+            placeholder="select an industry"
+            onChange={(evt) => {
+              setFieldValue(name, evt.target.value);
+              if (name === 'practitionerId') {
+                setFieldValue('availabilitiesId', '');
+              }
+            }}
+          >
+            <option key={name}></option>
             {datas.map((data) => (
               <option key={data.id} value={data.id}>
                 {name !== 'availabilitiesId'
@@ -72,12 +96,14 @@ const AppointmentForm = ({
               </option>
             ))}
           </Field>
-          {name === 'practitionerId' && (
+          {name === 'practitionerId' && value && (
             <Button
               variant="contained"
               color="primary"
               className={classes.button}
-              onClick={() => setIds('practitionerId', value)}
+              onClick={() => {
+                setPractitionerId(value);
+              }}
             >
               See Availabilities
             </Button>
@@ -91,34 +117,49 @@ const AppointmentForm = ({
     <div>
       <Formik
         initialValues={initialValues}
-        onSubmit={() => console.log('SUBMIT')}
-        enableReinitialize={true}
+        onSubmit={(props) => {
+          onSubmitAppointmentForm(props);
+        }}
       >
-        {(props: FormikProps<Form>) => (
-          <Form>
-            {console.log('PROPS', props.values)}
-            <SelectField
-              name="practitionerId"
-              label="Practitioners"
-              datas={practitioners}
-              value={Number(props.values.practitionerId)}
-            />
-            <SelectField
-              name="patientId"
-              label="Patients"
-              datas={patients}
-              value={Number(props.values.patientId)}
-            />
-            {!!practictionerId && (
+        {({ setFieldValue, values }) => {
+          const isValid = isSubmitDisabled(values);
+
+          return (
+            <Form>
               <SelectField
-                name="availabilitiesId"
-                label="Availabilities"
-                datas={availabilities}
-                value={Number(props.values.availabilitiesId)}
+                name="practitionerId"
+                label="Practitioners"
+                datas={practitioners}
+                setFieldValue={setFieldValue}
+                value={values.practitionerId}
               />
-            )}
-          </Form>
-        )}
+              <SelectField
+                name="patientId"
+                label="Patients"
+                datas={patients}
+                setFieldValue={setFieldValue}
+                value={values.patientId}
+              />
+              {!!practitionerId && practitionerId === values.practitionerId && (
+                <SelectField
+                  name="availabilitiesId"
+                  label="Availabilities"
+                  datas={availabilities}
+                  setFieldValue={setFieldValue}
+                  value={values.availabilitiesId}
+                />
+              )}
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                disabled={!isValid}
+              >
+                Submit
+              </Button>
+            </Form>
+          );
+        }}
       </Formik>
     </div>
   );

@@ -11,10 +11,13 @@ import {
   practitionersSelectors,
   patientsSelector,
   availabilitiesSelector,
+  onSubmitAppointmentFormAction,
 } from 'store/appointmentForm';
 
 const AppointmentsPage = () => {
   const dispatch = useDispatch();
+  const onSubmitAppointmentForm = (payload) =>
+    dispatch(onSubmitAppointmentFormAction(payload));
   const practitioners = useSelector((state) =>
     practitionersSelectors.selectAll(state.appointmentForm.practitioners),
   );
@@ -24,25 +27,8 @@ const AppointmentsPage = () => {
   const availabilities = useSelector((state) =>
     availabilitiesSelector.selectAll(state.appointmentForm.availabilities),
   );
-  const [practictionerId, setPractitionerId] = useState('');
-  const [patientId, setPatientId] = useState('');
-  const [availabilitiesId, setAvailabilitiesId] = useState('');
-
-  const setIds = (name, value) => {
-    switch (name) {
-      case 'practitionerId':
-        setPractitionerId(value);
-        break;
-      case 'patientId':
-        setPatientId(value);
-        break;
-      case 'availabilitiesId':
-        setAvailabilitiesId(value);
-        break;
-      default:
-        console.log('DEFAULT CASE', value);
-    }
-  };
+  const [practictionerId, setPractitionerId] = useState(null);
+  const [availabilitiesId, setAvailabilitiesId] = useState(null);
 
   useEffect(() => {
     dispatch(getPractitioners());
@@ -98,8 +84,11 @@ const AppointmentsPage = () => {
             practitioners={practitioners}
             patients={patients}
             availabilities={availabilities}
-            setIds={setIds}
-            practictionerId={practictionerId}
+            setPractitionerId={setPractitionerId}
+            practitionerId={practictionerId}
+            onSubmitAppointmentForm={onSubmitAppointmentForm}
+            availabilitiesId={availabilitiesId}
+            setAvailabilitiesId={setAvailabilitiesId}
           />
         </Section>
         <Section

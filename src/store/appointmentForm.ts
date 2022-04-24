@@ -26,12 +26,11 @@ export const getPatients = createAsyncThunk('getPatients', async () => {
 
 export const getAvailabilities = createAsyncThunk(
   'getAvailabilities',
-  async (practionnerId) => {
+  async (practionnerId: string) => {
     const response = await fetch(
       `${SERVER_API_ENDPOINT}/availabilities?practitionerId=${practionnerId}`,
     );
     const parsedResponse = await response.json();
-    console.log('REPONSE', parsedResponse);
     return parseIds(parsedResponse) as Availability[];
   },
 );
@@ -66,8 +65,27 @@ const appointmentFormSlice = createSlice({
       loading: false,
       error: null,
     }),
+    resultForm: {
+      practitionerId: null,
+      patientId: null,
+      availabilitiesId: null,
+    },
   },
-  reducers: {},
+  reducers: {
+    onSubmitAppointmentFormAction: {
+      reducer: (state, { payload }) => ({
+        ...state,
+        resultForm: {
+          practitionerId: payload.practitionerId,
+          patientId: payload.patientId,
+          availabilitiesId: payload.availabilitiesId,
+        },
+      }),
+      prepare: (payload) => {
+        return { payload };
+      },
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getPractitioners.pending, (state) => {
       state.practitioners.loading = true;
@@ -90,8 +108,8 @@ const appointmentFormSlice = createSlice({
     });
     builder.addCase(getAvailabilities.fulfilled, (state, action) => {
       availabilitiesAdapter.setAll(state.availabilities, action.payload);
-      state.patients.error = null;
-      state.patients.loading = false;
+      state.availabilities.error = null;
+      state.availabilities.loading = false;
     });
     builder.addCase(getPractitioners.rejected, (state, action) => {
       state.practitioners.error = action.error;
@@ -108,4 +126,5 @@ const appointmentFormSlice = createSlice({
   },
 });
 
+export const { onSubmitAppointmentFormAction } = appointmentFormSlice.actions;
 export default appointmentFormSlice;
