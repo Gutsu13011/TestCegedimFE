@@ -2,8 +2,57 @@ import AppointmentForm from 'components/AppointmentForm';
 import AppointmentList from 'components/AppointmentList';
 import Section from 'components/Section';
 import AllTasks from 'components/AllTasks';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getPatients,
+  getPractitioners,
+  getAvailabilities,
+  practitionersSelectors,
+  patientsSelector,
+  availabilitiesSelector,
+} from 'store/appointmentForm';
 
 const AppointmentsPage = () => {
+  const dispatch = useDispatch();
+  const practitioners = useSelector((state) =>
+    practitionersSelectors.selectAll(state.appointmentForm.practitioners),
+  );
+  const patients = useSelector((state) =>
+    patientsSelector.selectAll(state.appointmentForm.patients),
+  );
+  const availabilities = useSelector((state) =>
+    availabilitiesSelector.selectAll(state.appointmentForm.availabilities),
+  );
+  const [practictionerId, setPractitionerId] = useState('');
+  const [patientId, setPatientId] = useState('');
+  const [availabilitiesId, setAvailabilitiesId] = useState('');
+
+  const setIds = (name, value) => {
+    switch (name) {
+      case 'practitionerId':
+        setPractitionerId(value);
+        break;
+      case 'patientId':
+        setPatientId(value);
+        break;
+      case 'availabilitiesId':
+        setAvailabilitiesId(value);
+        break;
+      default:
+        console.log('DEFAULT CASE', value);
+    }
+  };
+
+  useEffect(() => {
+    dispatch(getPractitioners());
+    dispatch(getPatients());
+
+    if (practictionerId) {
+      dispatch(getAvailabilities(practictionerId));
+    }
+  }, [practictionerId]);
+
   return (
     <div className="appointment page">
       <h1>Appointments</h1>
@@ -45,7 +94,13 @@ const AppointmentsPage = () => {
           title="Appointment Form"
           className="appointment__form"
         >
-          <AppointmentForm />
+          <AppointmentForm
+            practitioners={practitioners}
+            patients={patients}
+            availabilities={availabilities}
+            setIds={setIds}
+            practictionerId={practictionerId}
+          />
         </Section>
         <Section
           name="appointment-list"
