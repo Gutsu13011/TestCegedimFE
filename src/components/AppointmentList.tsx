@@ -1,14 +1,45 @@
-import EditorLink from './EditorLink';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  List,
+  Typography,
+} from '@material-ui/core';
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
+import { formatDateRange } from 'utils/date';
 
-const AppointmentList = () => {
+const AppointmentList = ({
+  appointments,
+  getPractitionerName,
+  getPatientName,
+}) => {
+  console.log('appointments', appointments);
   return (
-    <div>
-      Edit
-      <EditorLink path="src/components/AppointmentList.tsx">
-        "src/components/AppointmentForm.tsx"
-      </EditorLink>{' '}
-      to display the list of appointments.
-    </div>
+    <List className="timeSlots">
+      {appointments.map((item) => (
+        <Card key={item.id} className="timeSlot__item btn">
+          <CardHeader
+            avatar={<CalendarTodayIcon />}
+            title={
+              <Typography>
+                {formatDateRange({
+                  from: new Date(item.startDate),
+                  to: new Date(item.endDate),
+                })}
+              </Typography>
+            }
+          />
+          <CardContent>
+            <Typography>{`Practitioner Name: ${getPractitionerName(
+              item.practitionerId,
+            )}`}</Typography>
+            <Typography>{`Patient Name: ${getPatientName(
+              item.patientId,
+            )}`}</Typography>
+          </CardContent>
+        </Card>
+      ))}
+    </List>
   );
 };
 

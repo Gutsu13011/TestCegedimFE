@@ -12,6 +12,8 @@ import {
   patientsSelector,
   availabilitiesSelector,
   onSubmitAppointmentFormAction,
+  appointmentsSelector,
+  getAppointments,
 } from 'store/appointmentForm';
 
 const AppointmentsPage = () => {
@@ -27,6 +29,9 @@ const AppointmentsPage = () => {
   const availabilities = useSelector((state) =>
     availabilitiesSelector.selectAll(state.appointmentForm.availabilities),
   );
+  const appointments = useSelector((state) =>
+    appointmentsSelector.selectAll(state.appointmentForm.appointments),
+  );
   const [practictionerId, setPractitionerId] = useState(null);
 
   useEffect(() => {
@@ -36,7 +41,24 @@ const AppointmentsPage = () => {
     if (practictionerId) {
       dispatch(getAvailabilities(practictionerId));
     }
+    dispatch(getAppointments());
   }, [practictionerId]);
+
+  const getPractitionerName = (practictionerId) => {
+    const { firstName, lastName } = practitioners.find(
+      (practitioner) => practictionerId === practitioner.id,
+    );
+
+    return `${firstName} ${lastName}`;
+  };
+
+  const getPatientName = (patientId) => {
+    const { firstName, lastName } = patients.find(
+      (patient) => patientId === patient.id,
+    );
+
+    return `${firstName} ${lastName}`;
+  };
 
   return (
     <div className="appointment page">
@@ -93,7 +115,11 @@ const AppointmentsPage = () => {
           title="Appointment List"
           className="appointment__list"
         >
-          <AppointmentList />
+          <AppointmentList
+            appointments={appointments}
+            getPractitionerName={getPractitionerName}
+            getPatientName={getPatientName}
+          />
         </Section>
       </div>
     </div>
