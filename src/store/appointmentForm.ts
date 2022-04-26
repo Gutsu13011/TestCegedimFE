@@ -1,8 +1,14 @@
-import { Practitioner, Patient, Availability } from '@prisma/client';
+import {
+  Practitioner,
+  Patient,
+  Availability,
+  Appointment,
+} from '@prisma/client';
 import {
   createAsyncThunk,
   createEntityAdapter,
   createSlice,
+  PayloadAction,
 } from '@reduxjs/toolkit';
 import config from 'config';
 import { parseIds } from 'store/utils';
@@ -73,15 +79,27 @@ const appointmentFormSlice = createSlice({
   },
   reducers: {
     onSubmitAppointmentFormAction: {
-      reducer: (state, { payload }) => ({
-        ...state,
-        resultForm: {
-          practitionerId: payload.practitionerId,
-          patientId: payload.patientId,
-          availabilitiesId: payload.availabilitiesId,
+      reducer(
+        state,
+        action: {
+          payload: {
+            practitionerId: string;
+            patientId: string;
+            availabilitiesId: string;
+          };
         },
-      }),
-      prepare: (payload) => {
+      ) {
+        state.resultForm = {
+          practitionerId: action.payload.practitionerId,
+          patientId: action.payload.patientId,
+          availabilitiesId: action.payload.availabilitiesId,
+        };
+      },
+      prepare(payload: {
+        practitionerId: string;
+        patientId: string;
+        availabilitiesId: string;
+      }) {
         return { payload };
       },
     },

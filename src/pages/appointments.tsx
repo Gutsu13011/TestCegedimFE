@@ -28,7 +28,6 @@ const AppointmentsPage = () => {
     availabilitiesSelector.selectAll(state.appointmentForm.availabilities),
   );
   const [practictionerId, setPractitionerId] = useState(null);
-  const [availabilitiesId, setAvailabilitiesId] = useState(null);
 
   useEffect(() => {
     dispatch(getPractitioners());
@@ -87,8 +86,6 @@ const AppointmentsPage = () => {
             setPractitionerId={setPractitionerId}
             practitionerId={practictionerId}
             onSubmitAppointmentForm={onSubmitAppointmentForm}
-            availabilitiesId={availabilitiesId}
-            setAvailabilitiesId={setAvailabilitiesId}
           />
         </Section>
         <Section
