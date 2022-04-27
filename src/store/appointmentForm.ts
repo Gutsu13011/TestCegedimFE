@@ -46,6 +46,20 @@ export const getAppointments = createAsyncThunk('getAppointments', async () => {
   return parseIds(parsedResponse) as Appointment[];
 });
 
+export const createAppointment = createAsyncThunk(
+  'createAppointment',
+  async (payload) => {
+    const { practitionerId, patientId, startDate, endDate } = payload;
+    const params = {
+      method: 'POST',
+      body: { practitionerId, patientId, startDate, endDate },
+    };
+    params.body = JSON.stringify(params.body);
+    const response = await fetch(`${SERVER_API_ENDPOINT}/appointments`, params);
+    await response.json();
+  },
+);
+
 const practitionersAdapter = createEntityAdapter<Practitioner>({
   sortComparer: (a, b) => a.id - b.id,
 });
@@ -61,9 +75,9 @@ const appointmentsAdapter = createEntityAdapter<Appointment>({
 });
 
 export const practitionersSelectors = practitionersAdapter.getSelectors();
-export const patientsSelector = patientsAdapter.getSelectors();
-export const availabilitiesSelector = availabilitiesAdapter.getSelectors();
-export const appointmentsSelector = appointmentsAdapter.getSelectors();
+export const patientsSelectors = patientsAdapter.getSelectors();
+export const availabilitiesSelectors = availabilitiesAdapter.getSelectors();
+export const appointmentsSelectors = appointmentsAdapter.getSelectors();
 
 const appointmentFormSlice = createSlice({
   name: 'appointmentForm',

@@ -39,6 +39,8 @@ const AppointmentForm = ({
   setPractitionerId,
   practitionerId,
   onSubmitAppointmentForm,
+  createAppointment,
+  setIsSubmit,
 }) => {
   const initialValues = {
     practitionerId: '',
@@ -118,7 +120,18 @@ const AppointmentForm = ({
       <Formik
         initialValues={initialValues}
         onSubmit={(props) => {
+          const { startDate, endDate } = availabilities.find(
+            (av: any) => av.id === Number(props.availabilitiesId),
+          );
+
+          createAppointment({
+            practitionerId: props.practitionerId,
+            patientId: props.patientId,
+            startDate,
+            endDate,
+          });
           onSubmitAppointmentForm(props);
+          setIsSubmit(true);
         }}
       >
         {({ setFieldValue, values }) => {

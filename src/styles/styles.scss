@@ -648,7 +648,19 @@ section {
   justify-content: space-evenly;
 }
 
+.appointments {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
 .timeSlot__item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.appointment__item {
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;

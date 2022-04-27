@@ -13,11 +13,11 @@ const AppointmentList = ({
   getPractitionerName,
   getPatientName,
 }) => {
-  console.log('appointments', appointments);
+  // console.log('appointments', appointments);
   return (
-    <List className="timeSlots">
-      {appointments.map((item) => (
-        <Card key={item.id} className="timeSlot__item btn">
+    <List className="appointments">
+      {appointments?.map((item) => (
+        <Card key={item.id} className="appointment__item btn">
           <CardHeader
             avatar={<CalendarTodayIcon />}
             title={
@@ -31,10 +31,10 @@ const AppointmentList = ({
           />
           <CardContent>
             <Typography>{`Practitioner Name: ${getPractitionerName(
-              item.practitionerId,
+              item?.practitionerId,
             )}`}</Typography>
             <Typography>{`Patient Name: ${getPatientName(
-              item.patientId,
+              item?.patientId,
             )}`}</Typography>
           </CardContent>
         </Card>

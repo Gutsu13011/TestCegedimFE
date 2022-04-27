@@ -9,11 +9,12 @@ import {
   getPractitioners,
   getAvailabilities,
   practitionersSelectors,
-  patientsSelector,
-  availabilitiesSelector,
+  patientsSelectors,
+  availabilitiesSelectors,
   onSubmitAppointmentFormAction,
-  appointmentsSelector,
+  appointmentsSelectors,
   getAppointments,
+  createAppointment as createAppointmentAction,
 } from 'store/appointmentForm';
 
 const AppointmentsPage = () => {
@@ -24,41 +25,51 @@ const AppointmentsPage = () => {
     practitionersSelectors.selectAll(state.appointmentForm.practitioners),
   );
   const patients = useSelector((state) =>
-    patientsSelector.selectAll(state.appointmentForm.patients),
+    patientsSelectors.selectAll(state.appointmentForm.patients),
   );
   const availabilities = useSelector((state) =>
-    availabilitiesSelector.selectAll(state.appointmentForm.availabilities),
+    availabilitiesSelectors.selectAll(state.appointmentForm.availabilities),
   );
   const appointments = useSelector((state) =>
-    appointmentsSelector.selectAll(state.appointmentForm.appointments),
+    appointmentsSelectors.selectAll(state.appointmentForm.appointments),
   );
   const [practictionerId, setPractitionerId] = useState(null);
+  const [isSubmit, setIsSubmit] = useState(false);
+  const getPractitionerName = (practictionerId: string) => {
+    const practitioner = practitioners?.find(
+      (practitioner) => practictionerId === practitioner.id,
+    );
+
+    return `${practitioner?.firstName} ${practitioner?.lastName}` || ' - ';
+  };
+  const getPatientName = (patientId: string) => {
+    const patient = patients?.find((patient) => patientId === patient.id);
+
+    return `${patient?.firstName} ${patient?.lastName}` || ' - ';
+  };
+  const createAppointment = (payload: any) => {
+    dispatch(createAppointmentAction(payload));
+  };
 
   useEffect(() => {
     dispatch(getPractitioners());
     dispatch(getPatients());
+    dispatch(getAppointments());
+  }, []);
 
+  useEffect(() => {
     if (practictionerId) {
       dispatch(getAvailabilities(practictionerId));
     }
-    dispatch(getAppointments());
   }, [practictionerId]);
 
-  const getPractitionerName = (practictionerId) => {
-    const { firstName, lastName } = practitioners.find(
-      (practitioner) => practictionerId === practitioner.id,
-    );
-
-    return `${firstName} ${lastName}`;
-  };
-
-  const getPatientName = (patientId) => {
-    const { firstName, lastName } = patients.find(
-      (patient) => patientId === patient.id,
-    );
-
-    return `${firstName} ${lastName}`;
-  };
+  useEffect(() => {
+    console.log(isSubmit);
+    if (isSubmit) {
+      dispatch(getAppointments());
+      setIsSubmit(false);
+    }
+  }, [isSubmit]);
 
   return (
     <div className="appointment page">
@@ -108,6 +119,8 @@ const AppointmentsPage = () => {
             setPractitionerId={setPractitionerId}
             practitionerId={practictionerId}
             onSubmitAppointmentForm={onSubmitAppointmentForm}
+            createAppointment={createAppointment}
+            setIsSubmit={setIsSubmit}
           />
         </Section>
         <Section
