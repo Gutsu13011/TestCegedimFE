@@ -24,14 +24,26 @@ const AppointmentsPage = () => {
   const practitioners = useSelector((state) =>
     practitionersSelectors.selectAll(state.appointmentForm.practitioners),
   );
+  const isPractitionersLoading = useSelector(
+    (state) => state.appointmentForm.practitioners.loading,
+  );
   const patients = useSelector((state) =>
     patientsSelectors.selectAll(state.appointmentForm.patients),
+  );
+  const isPatientsLoading = useSelector(
+    (state) => state.appointmentForm.patients.loading,
   );
   const availabilities = useSelector((state) =>
     availabilitiesSelectors.selectAll(state.appointmentForm.availabilities),
   );
+  const isAvailabilitiesLoading = useSelector(
+    (state) => state.appointmentForm.availabilities.loading,
+  );
   const appointments = useSelector((state) =>
     appointmentsSelectors.selectAll(state.appointmentForm.appointments),
+  );
+  const isAppointmentsLoading = useSelector(
+    (state) => state.appointmentForm.appointments.loading,
   );
   const [practictionerId, setPractitionerId] = useState(null);
   const [isSubmit, setIsSubmit] = useState(false);
@@ -64,7 +76,6 @@ const AppointmentsPage = () => {
   }, [practictionerId]);
 
   useEffect(() => {
-    console.log(isSubmit);
     if (isSubmit) {
       dispatch(getAppointments());
       setIsSubmit(false);
@@ -121,6 +132,9 @@ const AppointmentsPage = () => {
             onSubmitAppointmentForm={onSubmitAppointmentForm}
             createAppointment={createAppointment}
             setIsSubmit={setIsSubmit}
+            isPractitionersLoading={isPractitionersLoading}
+            isPatientsLoading={isPatientsLoading}
+            isAvailabilitiesLoading={isAvailabilitiesLoading}
           />
         </Section>
         <Section
@@ -132,6 +146,7 @@ const AppointmentsPage = () => {
             appointments={appointments}
             getPractitionerName={getPractitionerName}
             getPatientName={getPatientName}
+            isAppointmentsLoading={isAppointmentsLoading}
           />
         </Section>
       </div>

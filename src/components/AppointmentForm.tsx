@@ -41,6 +41,9 @@ const AppointmentForm = ({
   onSubmitAppointmentForm,
   createAppointment,
   setIsSubmit,
+  isPractitionersLoading,
+  isPatientsLoading,
+  isAvailabilitiesLoading,
 }) => {
   const initialValues = {
     practitionerId: '',
@@ -139,29 +142,35 @@ const AppointmentForm = ({
 
           return (
             <Form>
-              <SelectField
-                name="practitionerId"
-                label="Practitioners"
-                datas={practitioners}
-                setFieldValue={setFieldValue}
-                value={values.practitionerId}
-              />
-              <SelectField
-                name="patientId"
-                label="Patients"
-                datas={patients}
-                setFieldValue={setFieldValue}
-                value={values.patientId}
-              />
-              {!!practitionerId && practitionerId === values.practitionerId && (
+              {!isPractitionersLoading && (
                 <SelectField
-                  name="availabilitiesId"
-                  label="Availabilities"
-                  datas={availabilities}
+                  name="practitionerId"
+                  label="Practitioners"
+                  datas={practitioners}
                   setFieldValue={setFieldValue}
-                  value={values.availabilitiesId}
+                  value={values.practitionerId}
                 />
               )}
+              {!isPatientsLoading && (
+                <SelectField
+                  name="patientId"
+                  label="Patients"
+                  datas={patients}
+                  setFieldValue={setFieldValue}
+                  value={values.patientId}
+                />
+              )}
+              {!isAvailabilitiesLoading &&
+                !!practitionerId &&
+                practitionerId === values.practitionerId && (
+                  <SelectField
+                    name="availabilitiesId"
+                    label="Availabilities"
+                    datas={availabilities}
+                    setFieldValue={setFieldValue}
+                    value={values.availabilitiesId}
+                  />
+                )}
               <Button
                 variant="contained"
                 color="primary"

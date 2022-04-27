@@ -48,7 +48,7 @@ export const getAppointments = createAsyncThunk('getAppointments', async () => {
 
 export const createAppointment = createAsyncThunk(
   'createAppointment',
-  async (payload) => {
+  async (payload: any) => {
     const { practitionerId, patientId, startDate, endDate } = payload;
     const params = {
       method: 'POST',
