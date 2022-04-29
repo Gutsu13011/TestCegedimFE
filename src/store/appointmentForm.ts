@@ -60,6 +60,39 @@ export const createAppointment = createAsyncThunk(
   },
 );
 
+export const deleteAppointment = createAsyncThunk(
+  'deleteAppointment',
+  async (appointmentId: string) => {
+    const params = {
+      method: 'DELETE',
+      body: appointmentId,
+    };
+    params.body = JSON.stringify(params.body);
+    const response = await fetch(`${SERVER_API_ENDPOINT}/appointments`, params);
+    await response.json();
+  },
+);
+
+export const updateAppointment = createAsyncThunk(
+  'updateAppointment',
+  async (payload: any) => {
+    const { practitionerId, patientId, startDate, endDate, id } = payload;
+    const params = {
+      method: 'UPDATE',
+      body: {
+        practitionerId,
+        patientId,
+        startDate,
+        endDate,
+        id,
+      },
+    };
+    params.body = JSON.stringify(params.body);
+    const response = await fetch(`${SERVER_API_ENDPOINT}/appointments`, params);
+    await response.json();
+  },
+);
+
 const practitionersAdapter = createEntityAdapter<Practitioner>({
   sortComparer: (a, b) => a.id - b.id,
 });
@@ -78,6 +111,7 @@ export const practitionersSelectors = practitionersAdapter.getSelectors();
 export const patientsSelectors = patientsAdapter.getSelectors();
 export const availabilitiesSelectors = availabilitiesAdapter.getSelectors();
 export const appointmentsSelectors = appointmentsAdapter.getSelectors();
+export const updateFormSelector = (state) => state.appointmentForm.updateForm;
 
 const appointmentFormSlice = createSlice({
   name: 'appointmentForm',
@@ -98,10 +132,10 @@ const appointmentFormSlice = createSlice({
       loading: false,
       error: null,
     }),
-    resultForm: {
+    updateForm: {
       practitionerId: null,
       patientId: null,
-      availabilitiesId: null,
+      appointmentId: null,
     },
   },
   reducers: {
@@ -112,22 +146,31 @@ const appointmentFormSlice = createSlice({
           payload: {
             practitionerId: string;
             patientId: string;
-            availabilitiesId: string;
+            appointmentId: string;
           };
         },
       ) {
-        state.resultForm = {
+        state.updateForm = {
           practitionerId: action.payload.practitionerId,
           patientId: action.payload.patientId,
-          availabilitiesId: action.payload.availabilitiesId,
+          appointmentId: action.payload.appointmentId,
         };
       },
       prepare(payload: {
         practitionerId: string;
         patientId: string;
-        availabilitiesId: string;
+        appointmentId: string;
       }) {
         return { payload };
+      },
+    },
+    onResetFormAction: {
+      reducer(state) {
+        state.updateForm = {
+          practitionerId: null,
+          patientId: null,
+          appointmentId: state.updateForm.appointmentId,
+        };
       },
     },
   },
@@ -183,5 +226,8 @@ const appointmentFormSlice = createSlice({
   },
 });
 
-export const { onSubmitAppointmentFormAction } = appointmentFormSlice.actions;
+export const {
+  onSubmitAppointmentFormAction,
+  onResetFormAction,
+} = appointmentFormSlice.actions;
 export default appointmentFormSlice;

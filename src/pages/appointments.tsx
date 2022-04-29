@@ -15,12 +15,17 @@ import {
   appointmentsSelectors,
   getAppointments,
   createAppointment as createAppointmentAction,
+  deleteAppointment as deleteAppointmentAction,
+  updateAppointment as updateAppointmentAction,
+  updateFormSelector,
+  onResetFormAction,
 } from 'store/appointmentForm';
 
 const AppointmentsPage = () => {
   const dispatch = useDispatch();
   const onSubmitAppointmentForm = (payload) =>
     dispatch(onSubmitAppointmentFormAction(payload));
+  const onResetForm = () => dispatch(onResetFormAction());
   const practitioners = useSelector((state) =>
     practitionersSelectors.selectAll(state.appointmentForm.practitioners),
   );
@@ -45,8 +50,10 @@ const AppointmentsPage = () => {
   const isAppointmentsLoading = useSelector(
     (state) => state.appointmentForm.appointments.loading,
   );
+  const updateForm = useSelector((state) => updateFormSelector(state));
   const [practictionerId, setPractitionerId] = useState(null);
   const [isSubmit, setIsSubmit] = useState(false);
+  const [isUpload, setIsUpload] = useState(false);
   const getPractitionerName = useCallback(
     (practictionerId: string) => {
       const practitioner = practitioners?.find(
@@ -68,6 +75,13 @@ const AppointmentsPage = () => {
   const createAppointment = (payload: any) => {
     dispatch(createAppointmentAction(payload));
   };
+  const deleteAppointment = (id: string) => {
+    dispatch(deleteAppointmentAction(id));
+    setIsSubmit(true);
+  };
+  const updateAppointment = (payload: any) => {
+    dispatch(updateAppointmentAction(payload));
+  };
 
   useEffect(() => {
     dispatch(getPractitioners());
@@ -87,6 +101,13 @@ const AppointmentsPage = () => {
       setIsSubmit(false);
     }
   }, [isSubmit]);
+
+  useEffect(() => {
+    if (isUpload && !updateForm.appointmentId) {
+      // dispatch(getAppointments());
+      setIsUpload(false);
+    }
+  }, [isUpload, updateForm.appointmentId]);
 
   return (
     <div className="appointment page">
@@ -135,12 +156,16 @@ const AppointmentsPage = () => {
             availabilities={availabilities}
             setPractitionerId={setPractitionerId}
             practitionerId={practictionerId}
-            onSubmitAppointmentForm={onSubmitAppointmentForm}
             createAppointment={createAppointment}
             setIsSubmit={setIsSubmit}
             isPractitionersLoading={isPractitionersLoading}
             isPatientsLoading={isPatientsLoading}
             isAvailabilitiesLoading={isAvailabilitiesLoading}
+            updateForm={updateForm}
+            onResetForm={onResetForm}
+            isUpload={isUpload}
+            updateAppointment={updateAppointment}
+            onSubmitAppointmentForm={onSubmitAppointmentForm}
           />
         </Section>
         <Section
@@ -153,6 +178,9 @@ const AppointmentsPage = () => {
             getPractitionerName={getPractitionerName}
             getPatientName={getPatientName}
             isAppointmentsLoading={isAppointmentsLoading}
+            deleteAppointment={deleteAppointment}
+            onSubmitAppointmentForm={onSubmitAppointmentForm}
+            setIsUpload={setIsUpload}
           />
         </Section>
       </div>

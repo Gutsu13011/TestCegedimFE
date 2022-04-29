@@ -13,12 +13,16 @@ const AppointmentForm = ({
   availabilities,
   setPractitionerId,
   practitionerId,
-  onSubmitAppointmentForm,
   createAppointment,
   setIsSubmit,
   isPractitionersLoading,
   isPatientsLoading,
   isAvailabilitiesLoading,
+  updateForm,
+  onResetForm,
+  isUpload,
+  updateAppointment,
+  onSubmitAppointmentForm,
 }) => {
   const initialValues = {
     practitionerId: '',
@@ -37,7 +41,7 @@ const AppointmentForm = ({
   };
 
   return (
-    <div>
+    <div datacy="appointment-form">
       <Formik
         initialValues={initialValues}
         onSubmit={(props) => {
@@ -45,18 +49,54 @@ const AppointmentForm = ({
             (av: any) => av.id === Number(props.availabilitiesId),
           );
 
-          createAppointment({
-            practitionerId: props.practitionerId,
-            patientId: props.patientId,
-            startDate,
-            endDate,
-          });
-          onSubmitAppointmentForm(props);
-          setIsSubmit(true);
+          if (!isUpload) {
+            createAppointment({
+              practitionerId: props.practitionerId,
+              patientId: props.patientId,
+              startDate,
+              endDate,
+            });
+            setIsSubmit(true);
+          } else {
+            updateAppointment({
+              practitionerId: props.practitionerId,
+              patientId: props.patientId,
+              endDate,
+              startDate,
+              id: updateForm?.appointmentId,
+            });
+            onSubmitAppointmentForm({
+              practitionerId: null,
+              patientId: null,
+              appointmentId: null,
+            });
+          }
         }}
       >
         {({ setFieldValue, values }) => {
           const isValid = isSubmitDisabled(values);
+
+          if (
+            updateForm?.practitionerId &&
+            values?.practitionerId !== updateForm?.practitionerId
+          ) {
+            setFieldValue('practitionerId', updateForm.practitionerId);
+          }
+          if (
+            updateForm?.patientId &&
+            values?.patientId !== updateForm?.patientId
+          ) {
+            setFieldValue('patientId', updateForm.patientId);
+          }
+
+          if (
+            updateForm?.practitionerId &&
+            updateForm?.patientId &&
+            values?.practitionerId === updateForm?.practitionerId &&
+            values?.patientId === updateForm?.patientId
+          ) {
+            onResetForm();
+          }
 
           return (
             <Form>
@@ -97,7 +137,7 @@ const AppointmentForm = ({
                 type="submit"
                 disabled={!isValid}
               >
-                Submit
+                {!isUpload ? 'Submit' : 'Update'}
               </Button>
             </Form>
           );

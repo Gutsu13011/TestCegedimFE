@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import React, { memo } from 'react';
 import { withStyles, Typography, Button } from '@material-ui/core';
 import { Field } from 'formik';
 import { formatDateRange, getAge } from '../utils/date';
@@ -6,8 +6,15 @@ import CheckIcon from '@material-ui/icons/Check';
 
 const styles = () => ({
   select: {
-    maxWidth: 350,
+    width: 350,
     marginBottom: 15,
+    borderRadius: 10,
+  },
+  selectSuccess: {
+    borderColor: 'green',
+  },
+  selectError: {
+    borderColor: 'red',
   },
   button: {
     maxWidth: 200,
@@ -16,14 +23,20 @@ const styles = () => ({
     height: 20,
   },
   icon: {
-    marginRight: 10,
-    marginBottom: 15,
+    margin: '0 0 15px 10px',
   },
   iconWarning: {
     color: 'red',
   },
   iconSuccess: {
     color: 'green',
+  },
+  divMain: {
+    display: 'block !important',
+    marginTop: 10,
+  },
+  divIconFieldButon: {
+    display: 'flex',
   },
 });
 
@@ -38,23 +51,18 @@ const SelectField = ({
   classes,
 }) => {
   return (
-    <>
+    <div className={classes.divMain} datacy={`selectField-${name}`}>
       <Typography>{label}</Typography>
-      <div>
-        {name === 'practitionerId' && (
-          <CheckIcon
-            className={`${
-              practitionerId && practitionerId === value
-                ? classes.iconSuccess
-                : classes.iconWarning
-            } ${classes.icon}`}
-          />
-        )}
+      <div className={classes.divIconFieldButon}>
         <Field
           as="select"
           name={name}
-          className={classes.select}
-          placeholder="select an industry"
+          className={`${
+            (practitionerId && practitionerId === value) ||
+            (name !== 'practitionerId' && value)
+              ? classes.selectSuccess
+              : classes.selectError
+          } ${classes.select}`}
           onChange={(evt) => {
             setFieldValue(name, evt.target.value);
             if (name === 'practitionerId') {
@@ -70,12 +78,21 @@ const SelectField = ({
                     data.speciality || getAge(data.birthDate)
                   }`
                 : `${formatDateRange({
-                    from: data.startDate,
-                    to: data.endDate,
+                    from: new Date(data.startDate),
+                    to: new Date(data.endDate),
                   })}`}
             </option>
           ))}
         </Field>
+        {name === 'practitionerId' && (
+          <CheckIcon
+            className={`${
+              practitionerId && practitionerId === value
+                ? classes.iconSuccess
+                : classes.iconWarning
+            } ${classes.icon}`}
+          />
+        )}
         {name === 'practitionerId' && value && (
           <Button
             variant="contained"
@@ -89,7 +106,7 @@ const SelectField = ({
           </Button>
         )}
       </div>
-    </>
+    </div>
   );
 };
 

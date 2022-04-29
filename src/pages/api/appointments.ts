@@ -21,5 +21,29 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       });
       res.status(200).json(appointment);
       break;
+    case 'DELETE':
+      const id = JSON.parse(req.body);
+      const appointmentToDelete = await prisma.appointment.delete({
+        where: {
+          id: parseInt(id),
+        },
+      });
+      res.status(200).json(appointmentToDelete);
+      break;
+    case 'UPDATE':
+      const appointmentToUpdate = await prisma.appointment.update({
+        where: {
+          id: parseInt(id),
+        },
+        data: {
+          patientId: parseInt(patientId),
+          practitionerId: parseInt(practitionerId),
+          startDate: startDate,
+          endDate: endDate,
+        },
+      });
+      console.log('reeree', res);
+      res.status(200).json(appointmentToUpdate);
+      break;
   }
 };
