@@ -2,7 +2,7 @@ import AppointmentForm from 'components/AppointmentForm';
 import AppointmentList from 'components/AppointmentList';
 import Section from 'components/Section';
 import AllTasks from 'components/AllTasks';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getPatients,
@@ -47,21 +47,21 @@ const AppointmentsPage = () => {
   );
   const [practictionerId, setPractitionerId] = useState(null);
   const [isSubmit, setIsSubmit] = useState(false);
-  const getPractitionerName = (practictionerId: string) => {
+  const getPractitionerName = useCallback((practictionerId: string) => {
     const practitioner = practitioners?.find(
       (practitioner) => practictionerId === practitioner.id,
     );
 
     return `${practitioner?.firstName} ${practitioner?.lastName}` || ' - ';
-  };
-  const getPatientName = (patientId: string) => {
+  }, []);
+  const getPatientName = useCallback((patientId: string) => {
     const patient = patients?.find((patient) => patientId === patient.id);
 
     return `${patient?.firstName} ${patient?.lastName}` || ' - ';
-  };
-  const createAppointment = (payload: any) => {
+  }, []);
+  const createAppointment = useCallback((payload: any) => {
     dispatch(createAppointmentAction(payload));
-  };
+  }, []);
 
   useEffect(() => {
     dispatch(getPractitioners());

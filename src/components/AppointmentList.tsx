@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Card,
   CardContent,
@@ -14,7 +15,6 @@ const AppointmentList = ({
   getPatientName,
   isAppointmentsLoading,
 }) => {
-  // console.log('appointments', appointments);
   return (
     <List className="appointments">
       {!isAppointmentsLoading &&
@@ -45,4 +45,4 @@ const AppointmentList = ({
   );
 };
 
-export default AppointmentList;
+export default React.memo(AppointmentList);
