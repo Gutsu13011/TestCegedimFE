@@ -42,7 +42,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           endDate: endDate,
         },
       });
-      console.log('reeree', res);
       res.status(200).json(appointmentToUpdate);
       break;
   }
