@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import {
   Card,
   CardContent,
@@ -45,4 +45,4 @@ const AppointmentList = ({
   );
 };
 
-export default React.memo(AppointmentList);
+export default memo(AppointmentList);

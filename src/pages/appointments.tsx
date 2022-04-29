@@ -47,21 +47,27 @@ const AppointmentsPage = () => {
   );
   const [practictionerId, setPractitionerId] = useState(null);
   const [isSubmit, setIsSubmit] = useState(false);
-  const getPractitionerName = useCallback((practictionerId: string) => {
-    const practitioner = practitioners?.find(
-      (practitioner) => practictionerId === practitioner.id,
-    );
+  const getPractitionerName = useCallback(
+    (practictionerId: string) => {
+      const practitioner = practitioners?.find(
+        (practitioner) => practictionerId === practitioner.id,
+      );
 
-    return `${practitioner?.firstName} ${practitioner?.lastName}` || ' - ';
-  }, []);
-  const getPatientName = useCallback((patientId: string) => {
-    const patient = patients?.find((patient) => patientId === patient.id);
+      return `${practitioner?.firstName} ${practitioner?.lastName}` || ' - ';
+    },
+    [practitioners],
+  );
+  const getPatientName = useCallback(
+    (patientId: string) => {
+      const patient = patients?.find((patient) => patientId === patient.id);
 
-    return `${patient?.firstName} ${patient?.lastName}` || ' - ';
-  }, []);
-  const createAppointment = useCallback((payload: any) => {
+      return `${patient?.firstName} ${patient?.lastName}` || ' - ';
+    },
+    [patients],
+  );
+  const createAppointment = (payload: any) => {
     dispatch(createAppointmentAction(payload));
-  }, []);
+  };
 
   useEffect(() => {
     dispatch(getPractitioners());
