@@ -486,6 +486,10 @@ section > p > a {
   background-color: #fff;
   transition: box-shadow 0.2s ease;
 
+  &.MuiPaper-rounded {
+    border-radius: 20px;
+  }
+
   &:hover {
     box-shadow: inset 0 0 0 4px #000, inset 0px 0px 0 6px #ccc;
   }
@@ -648,8 +652,22 @@ section {
   justify-content: space-evenly;
 }
 
+.appointments {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
 .timeSlot__item {
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
+}
+
+.appointment__item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  width: 300px;
 }
